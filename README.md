@@ -17,7 +17,7 @@ BDHPD is a novel deep learning architecture designed for Parkinson's Disease det
 - Cross-language generalization capabilities
 
 ### Model Architecture
-![Model Architecture](figures/model_architecture.png)
+![Model Architecture](model_architecture.png)
 
 The model uses a shared backbone for feature extraction, followed by task-specific branches for PD detection.
 
