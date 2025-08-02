@@ -1,0 +1,120 @@
+data:
+  max_length_in_seconds: 10
+  padding: max_length
+  truncation: true
+  ssl: true
+  wavelets: true
+  articulation: false
+  num_folds: 10
+  sample_rate: 16000
+  random_crop_longer_audio: true
+  repeat_shorter_audio: true
+  stft_params:
+    type: "standard" # standard, mel, mfcc, bfcc, gfcc, cochleagram
+    n_fft: 400
+    hop_length: 320
+    win_length: 400
+    n_mels: 80 # used in mel and cochleagram
+    n_fcc: 40 # used in mfcc, bfcc, gfcc
+    spec_dim: 414 # n_mels (mel) | n_fft/2 + 1 = 201 (standard) | n_mfcc (mfcc) - X3 for delta and delta delta
+    use_delta_and_delta_delta: false
+  articulation_params:
+    mean: 10.5
+    std: 10000.0
+  use_data_augmentation: false
+  augmentation_probability: 0.2
+
+
+# Dataset specific information
+active_dataset: "ewadb"
+ewadb:
+  active: true
+  train_metadata_path: "dataset_metadata/ewadb_train_metadata.tsv"
+  test_metadata_path: "dataset_metadata/ewadb_test_metadata.tsv"
+  validation_metadata_path: "dataset_metadata/ewadb_validation_metadata.tsv"
+  metadata_type: tsv
+  label_key: "DIAGNOSIS"
+  audio_path_key: "AUDIOFILE"
+  dataset_root_path: /mnt/disk3/datasets/EWADB/S0489_VAD_DEREVERB_SE/
+  label2id: { "Healthy": 0, "Parkinson": 1 }
+
+pc_gita:
+  active: true
+  train_metadata_path: "dataset_metadata/pcgita_train_metadata.tsv"
+  test_metadata_path: "dataset_metadata/pcgita_test_metadata.tsv"
+  validation_metadata_path: "dataset_metadata/pcgita_validation_metadata.tsv"
+  metadata_type: tsv
+  label_key: "DIAGNOSIS"
+  audio_path_key: "AUDIOFILE"
+  dataset_root_path: /mnt/disk3/datasets/PC_GITA/
+  label2id: { "Healthy": 0, "Parkinson": 1 }
+
+model:
+  model_name_or_path: microsoft/wavlm-base # jonatasgrosman/wav2vec2-large-xlsr-53-spanish
+  classifier_type: attention_pooling
+  classifier_num_layers: 2
+  classifier_hidden_size: 768
+  freeze_ssl: false
+  use_all_layers: true
+  # frame_fusion: true - Always true
+  dropout: 0.1
+  increase_resolution_cnn: false
+  num_classes: null # filled dynamically -> 2 (status) | 4 (UPDRS-speech)
+  classifier_head_type: "linear" # linear, transformer
+  transformer_nhead: 6
+  transformer_dim_feedforward: 2048
+  apply_final_sigmoid: false # BCEWithLogitsLoss - more numerically stable
+
+  type_based_classifiers: true
+  num_class_types: 2
+
+  use_adain_layers: true
+  adain_num_layers: 2
+  adain_embedding_dim: 768
+
+  use_conv_bottleneck_layer: true
+  conv_bottleneck_num_layers: 2
+  conv_bottleneck_reduction_ratio: 8
+
+training:
+  checkpoint_dir: "/mnt/disk3/mlaquatra/CLPR/ewadb/"
+  batch_size: 64
+  gradient_accumulation_steps: 1
+  num_epochs: 20
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  num_workers: 8
+  pin_memory: true
+  seed: 42
+  verbose: true
+  balance_dataloaders: true
+
+  scheduler_decay_type: linear
+  warmup_ratio: 0.1
+
+  use_cuda: true
+  multi_gpu: true
+
+  use_comet: false
+  comet_project_name: "ssl4pr"
+  comet_experiment_name: SSL4PR
+  log_on_screen: false
+
+  cross_entropy_loss:
+    active: true
+    multiplier: 1.0
+
+  contrastive_loss:
+    active: true
+    multiplier: 1.0
+
+  resume_from_last_checkpoint: false
+  validation:
+    active: true
+    validation_split: 0.1
+    validation_type: "speaker" # random, speaker
+
+    metric: f1+sensitivity # loss, accuracy, f1, precision, recall (use + to combine metrics with average)
+    metric_lower_is_better: false
+
+  label_key: "status" # status, UPDRS-speech

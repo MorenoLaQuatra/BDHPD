@@ -1,0 +1,51 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Logs and metadata
+*.log
+*.tsv
+
+# Environment and OS-specific files
+.env
+*.swp
+.DS_Store
+Thumbs.db
+
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Checkpoints and model weights
+ckpt_dir/
+*.pt
+
+# Shell script artifacts
+*.sh~
+
+# IDEs and editor files
+.vscode/
+.idea/
+
+# Test output
+testing_log_*.log
+training_log_*.log
+
+# Configs you don't want to track (optional)
+# configs/config.yaml  # Uncomment if it's user/machine-specific
+
+# Build artifacts (if any C extensions or packaging tools are used)
+build/
+dist/
+*.egg-info/
+
+# Git metadata (safe to ignore for clarity, not needed in the file)
+# .git/
+
+# Ignore backup or temp files
+*~
+*.bak
+*.tmp
