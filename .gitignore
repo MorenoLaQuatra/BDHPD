@@ -5,7 +5,6 @@ __pycache__/
 
 # Logs and metadata
 *.log
-*.tsv
 
 # Environment and OS-specific files
 .env
